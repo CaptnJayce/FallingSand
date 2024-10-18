@@ -10,15 +10,15 @@ void frameDelay() {
 
 enum TileType { EMPTY = 0, BLOCK = 1, SAND = 2 };
 
-bool IsBlockBelow(int tilemap[][5], int rows, int cols, int row, int col) {
+bool IsBlockBelow(int tilemap[][18], int rows, int cols, int row, int col) {
   return (row + 1 < rows) && (tilemap[row + 1][col] == BLOCK);
 }
 
-bool IsGapRight(int tilemap[][5], int rows, int cols, int row, int col) {
+bool IsGapRight(int tilemap[][18], int rows, int cols, int row, int col) {
   return (row + 1 < rows) && (tilemap[row + 1][col + 1] == EMPTY);
 }
 
-bool IsGapLeft(int tilemap[][5], int rows, int cols, int row, int col) {
+bool IsGapLeft(int tilemap[][18], int rows, int cols, int row, int col) {
   return (row + 1 < rows) && (tilemap[row + 1][col - 1] == EMPTY);
 }
 
@@ -26,15 +26,28 @@ int main() {
   const int tileHeight = 32;
   const int tileWidth = 32;
 
-  const int rows = 5;
-  const int cols = 5;
+  const int rows = 18;
+  const int cols = 18;
 
   int tilemap[rows][cols]{
-    { 0, 2, 2, 2, 0 }, //
-    { 0, 0, 0, 0, 0 }, //
-    { 0, 0, 0, 0, 1 }, //
-    { 0, 1, 0, 1, 0 }, //
-    { 0, 0, 0, 0, 0 }  //
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+    { 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+    { 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+    { 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+    { 0, 0, 0, 0, 0, 0, 0, 1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+    { 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 }, //
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
   };
 
   InitWindow(576, 576, "falling sand");
@@ -53,20 +66,19 @@ int main() {
           if (!IsBlockBelow(tilemap, rows, cols, row, col) && tilemap[row + 1][col] == EMPTY) {
             tilemap[row + 1][col] = SAND;
             tilemap[row][col] = EMPTY;
-          }
-
-          if (IsGapRight(tilemap, rows, cols, row, col) && tilemap[row][col + 1] == EMPTY &&
-              tilemap[row + 1][col] == BLOCK) {
-            if (IsGapRight(tilemap, rows, cols, row, col) && tilemap[row + 1][col + 1] == EMPTY)
-              tilemap[row + 1][col + 1] = SAND;
-            tilemap[row][col] = EMPTY;
-          }
-
-          if (IsGapLeft(tilemap, rows, cols, row, col) && tilemap[row][col - 1] == EMPTY &&
-              tilemap[row + 1][col] == BLOCK) {
-            if (IsGapLeft(tilemap, rows, cols, row, col) && tilemap[row + 1][col - 1] == EMPTY)
-              tilemap[row + 1][col - 1] = SAND;
-            tilemap[row][col] = EMPTY;
+          } else {
+            if (IsGapRight(tilemap, rows, cols, row, col) && (tilemap[row][col + 1] == EMPTY) &&
+                tilemap[row + 1][col] != EMPTY) {
+              if (IsGapRight(tilemap, rows, cols, row, col) && tilemap[row + 1][col + 1] == EMPTY)
+                tilemap[row + 1][col + 1] = SAND;
+              tilemap[row][col] = EMPTY;
+            }
+            if (IsGapLeft(tilemap, rows, cols, row, col) && tilemap[row][col - 1] == EMPTY &&
+                tilemap[row + 1][col] != EMPTY) {
+              if (IsGapLeft(tilemap, rows, cols, row, col) && tilemap[row + 1][col - 1] == EMPTY)
+                tilemap[row + 1][col - 1] = SAND;
+              tilemap[row][col] = EMPTY;
+            }
           }
         }
       }
