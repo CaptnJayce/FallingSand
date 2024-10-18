@@ -4,7 +4,8 @@
 
 void frameDelay() {
   time_t before = time(0);
-  while (difftime(time(0), before) < 1);
+  while (difftime(time(0), before) < 1)
+    ;
 }
 
 enum TileType { EMPTY = 0, BLOCK = 1, SAND = 2 };
@@ -28,11 +29,13 @@ int main() {
   const int rows = 5;
   const int cols = 5;
 
-  int tilemap[rows][cols]{{0, 2, 2, 2, 0},
-                          {0, 0, 0, 0, 0},
-                          {0, 0, 0, 0, 0},
-                          {0, 1, 0, 1, 0},
-                          {0, 0, 0, 0, 0}};
+  int tilemap[rows][cols]{
+    { 0, 2, 2, 2, 0 }, //
+    { 0, 0, 0, 0, 0 }, //
+    { 0, 0, 0, 0, 1 }, //
+    { 0, 1, 0, 1, 0 }, //
+    { 0, 0, 0, 0, 0 }  //
+  };
 
   InitWindow(576, 576, "falling sand");
   SetTargetFPS(60);
@@ -46,21 +49,25 @@ int main() {
     for (int row = rows - 1; row >= 0; row--) {
       for (int col = 0; col < cols; col++) {
         if (tilemap[row][col] == SAND) {
-          if (!IsBlockBelow(tilemap, rows, cols, row, col) &&
-              tilemap[row + 1][col] == EMPTY) {
+          // SAND FALLING LOGIC
+          if (!IsBlockBelow(tilemap, rows, cols, row, col) && tilemap[row + 1][col] == EMPTY) {
             tilemap[row + 1][col] = SAND;
             tilemap[row][col] = EMPTY;
           }
 
-          if (IsGapRight(tilemap, rows, cols, row, col) &&
-              tilemap[row + 1][col + 1] == EMPTY && tilemap[row + 1][col] == BLOCK) {
-            tilemap[row + 1][col + 1] = SAND;
+          if (IsGapRight(tilemap, rows, cols, row, col) && tilemap[row][col + 1] == EMPTY &&
+              tilemap[row + 1][col] == BLOCK) {
+            if (IsGapRight(tilemap, rows, cols, row, col) && tilemap[row + 1][col + 1] == EMPTY)
+              tilemap[row + 1][col + 1] = SAND;
             tilemap[row][col] = EMPTY;
-          } else if (IsGapLeft(tilemap, rows, cols, row, col) &&
-              tilemap[row + 1][col - 1] == EMPTY && tilemap[row + 1][col] == BLOCK) {
-            tilemap[row + 1][col - 1] = SAND;
+          }
+
+          if (IsGapLeft(tilemap, rows, cols, row, col) && tilemap[row][col - 1] == EMPTY &&
+              tilemap[row + 1][col] == BLOCK) {
+            if (IsGapLeft(tilemap, rows, cols, row, col) && tilemap[row + 1][col - 1] == EMPTY)
+              tilemap[row + 1][col - 1] = SAND;
             tilemap[row][col] = EMPTY;
-          } 
+          }
         }
       }
     }
