@@ -1,12 +1,9 @@
 #include "raylib.h"
 #include <ctime>
 #include <iostream>
+#include <unistd.h>
 
-void frameDelay() {
-  time_t before = time(0);
-  while (difftime(time(0), before) < 1)
-    ;
-}
+void frameDelay() { usleep(5); }
 
 enum TileType { EMPTY = 0, BLOCK = 1, SAND = 2 };
 
@@ -57,14 +54,24 @@ int main() {
     BeginDrawing();
     ClearBackground(BLACK);
 
-    int mouseX = GetMouseX() / tileWidth;
-    int mouseY = GetMouseY() / tileHeight;
+    int mouseY = GetMouseX() / tileWidth;
+    int mouseX = GetMouseY() / tileHeight;
 
-    if (mouseX >= 0 && mouseX < cols && mouseY >= 0 && mouseY < rows) {
-      DrawRectangle(mouseX * tileWidth, mouseY * tileHeight, tileWidth, tileHeight, Color{ 255, 255, 255, 128 });
+    if (mouseY >= 0 && mouseY < cols && mouseX >= 0 && mouseX < rows) {
+      DrawRectangle(mouseY * tileWidth, mouseX * tileHeight, tileWidth, tileHeight, Color{ 255, 255, 255, 128 });
     }
 
-   // frameDelay();
+    if (IsMouseButtonPressed(0)) {
+      std::cout << "placing" << std::endl;
+      tilemap[mouseX][mouseY] = SAND;
+    }
+
+    if (IsMouseButtonPressed(1)) {
+      std::cout << "deleting" << std::endl;
+      tilemap[mouseX][mouseY] = EMPTY;
+    }
+
+    //frameDelay();
 
     for (int row = rows - 1; row >= 0; row--) {
       for (int col = 0; col < cols; col++) {
@@ -96,7 +103,7 @@ int main() {
         int x = col * tileWidth;
         int y = row * tileHeight;
 
-       if (tilemap[row][col] == BLOCK) {
+        if (tilemap[row][col] == BLOCK) {
           DrawRectangle(x, y, tileWidth, tileHeight, WHITE);
         } else if (tilemap[row][col] == SAND) {
           DrawRectangle(x, y, tileWidth, tileHeight, YELLOW);
