@@ -1,10 +1,24 @@
 #include "raylib.h"
+#include <ctime>
 #include <iostream>
+
+void frameDelay() {
+  time_t before = time(0);
+  while (difftime(time(0), before) < 1);
+}
 
 enum TileType { EMPTY = 0, BLOCK = 1, SAND = 2 };
 
 bool IsBlockBelow(int tilemap[][5], int rows, int cols, int row, int col) {
   return (row + 1 < rows) && (tilemap[row + 1][col] == BLOCK);
+}
+
+bool IsGapRight(int tilemap[][5], int rows, int cols, int row, int col) {
+  return (row + 1 < rows) && (tilemap[row + 1][col + 1] == EMPTY);
+}
+
+bool IsGapLeft(int tilemap[][5], int rows, int cols, int row, int col) {
+  return (row + 1 < rows) && (tilemap[row + 1][col - 1] == EMPTY);
 }
 
 int main() {
@@ -14,29 +28,39 @@ int main() {
   const int rows = 5;
   const int cols = 5;
 
-  int tilemap[rows][cols]{{0, 2, 0, 2, 0},
+  int tilemap[rows][cols]{{0, 2, 2, 2, 0},
                           {0, 0, 0, 0, 0},
                           {0, 0, 0, 0, 0},
-                          {0, 0, 1, 1, 0},
+                          {0, 1, 0, 1, 0},
                           {0, 0, 0, 0, 0}};
 
-  InitWindow(600, 600, "falling sand");
+  InitWindow(576, 576, "falling sand");
   SetTargetFPS(60);
 
   while (WindowShouldClose() == false) {
     BeginDrawing();
     ClearBackground(BLACK);
 
-    if (IsKeyDown(KEY_SPACE)) {
-      for (int row = rows - 1; row >= 0; row--) {
-        for (int col = 0; col < cols; col++) {
-          if (tilemap[row][col] == SAND) {
-            if (!IsBlockBelow(tilemap, rows, cols, row, col) &&
-                tilemap[row + 1][col] == EMPTY) {
-              tilemap[row + 1][col] = SAND;
-              tilemap[row][col] = EMPTY;
-            }
+    frameDelay();
+
+    for (int row = rows - 1; row >= 0; row--) {
+      for (int col = 0; col < cols; col++) {
+        if (tilemap[row][col] == SAND) {
+          if (!IsBlockBelow(tilemap, rows, cols, row, col) &&
+              tilemap[row + 1][col] == EMPTY) {
+            tilemap[row + 1][col] = SAND;
+            tilemap[row][col] = EMPTY;
           }
+
+          if (IsGapRight(tilemap, rows, cols, row, col) &&
+              tilemap[row + 1][col + 1] == EMPTY && tilemap[row + 1][col] == BLOCK) {
+            tilemap[row + 1][col + 1] = SAND;
+            tilemap[row][col] = EMPTY;
+          } else if (IsGapLeft(tilemap, rows, cols, row, col) &&
+              tilemap[row + 1][col - 1] == EMPTY && tilemap[row + 1][col] == BLOCK) {
+            tilemap[row + 1][col - 1] = SAND;
+            tilemap[row][col] = EMPTY;
+          } 
         }
       }
     }
