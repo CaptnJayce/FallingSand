@@ -3,9 +3,8 @@
 #include <iostream>
 #include <unistd.h>
 
-void frameDelay() { usleep(5); }
-
-enum TileType { EMPTY = 0, BLOCK = 1, SAND = 2 };
+enum TileType { EMPTY = 0, BLOCK = 1, BEDROCK = 2, SAND = 3 };
+int currentType; 
 
 bool IsBlockBelow(int tilemap[][18], int rows, int cols, int row, int col) {
   return (row + 1 < rows) && (tilemap[row + 1][col] == BLOCK);
@@ -27,24 +26,24 @@ int main() {
   const int cols = 18;
 
   int tilemap[rows][cols]{
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-    { 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0 }, //
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-    { 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-    { 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-    { 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0 }, //
-    { 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0 }, //
-    { 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0 }, //
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }, //
+      {2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2}, //
+      {2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2}, //
+      {2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2}, //
+      {2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2}, //
+      {2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2}, //
+      {2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2}, //
+      {2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2}, //
+      {2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2}, //
+      {2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2}, //
+      {2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2}, //
+      {2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2}, //
+      {2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2}, //
+      {2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2}, //
+      {2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2}, //
+      {2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2}, //
+      {2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2}, //
+      {2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2}, //
+      {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}, //
   };
 
   InitWindow(576, 576, "falling sand");
@@ -58,20 +57,25 @@ int main() {
     int mouseX = GetMouseY() / tileHeight;
 
     if (mouseY >= 0 && mouseY < cols && mouseX >= 0 && mouseX < rows) {
-      DrawRectangle(mouseY * tileWidth, mouseX * tileHeight, tileWidth, tileHeight, Color{ 255, 255, 255, 128 });
+      DrawRectangle(mouseY * tileWidth, mouseX * tileHeight, tileWidth, tileHeight, Color{255, 255, 255, 128});
     }
 
-    if (IsMouseButtonPressed(0)) {
-      std::cout << "placing" << std::endl;
-      tilemap[mouseX][mouseY] = SAND;
+    if (IsKeyPressed(KEY_ONE)){
+        currentType = 1;
+    }
+    if (IsKeyPressed(KEY_TWO)) {
+        currentType = 3;
     }
 
-    if (IsMouseButtonPressed(1)) {
-      std::cout << "deleting" << std::endl;
-      tilemap[mouseX][mouseY] = EMPTY;
-    }
+    if (tilemap[mouseX][mouseY] != BEDROCK) {
+      if (IsMouseButtonDown(0)) {
+        tilemap[mouseX][mouseY] = currentType;
+      }
 
-    //frameDelay();
+      if (IsMouseButtonDown(1)) {
+        tilemap[mouseX][mouseY] = EMPTY;
+      }
+    }
 
     for (int row = rows - 1; row >= 0; row--) {
       for (int col = 0; col < cols; col++) {
