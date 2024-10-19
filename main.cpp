@@ -4,7 +4,7 @@
 #include <unistd.h>
 
 enum TileType { EMPTY = 0, BLOCK = 1, BEDROCK = 2, SAND = 3 };
-int currentType; 
+int currentType;
 
 bool IsBlockBelow(int tilemap[][18], int rows, int cols, int row, int col) {
   return (row + 1 < rows) && (tilemap[row + 1][col] == BLOCK);
@@ -60,11 +60,11 @@ int main() {
       DrawRectangle(mouseY * tileWidth, mouseX * tileHeight, tileWidth, tileHeight, Color{255, 255, 255, 128});
     }
 
-    if (IsKeyPressed(KEY_ONE)){
-        currentType = 1;
+    if (IsKeyPressed(KEY_ONE)) {
+      currentType = 1;
     }
     if (IsKeyPressed(KEY_TWO)) {
-        currentType = 3;
+      currentType = 3;
     }
 
     if (tilemap[mouseX][mouseY] != BEDROCK) {
@@ -114,6 +114,12 @@ int main() {
         }
       }
     }
+
+    // UI
+    DrawText(TextFormat("Current Block: %d", currentType), 576 / 2, 0 + 10, 5, WHITE);
+    DrawFPS(0 + 10, 0 + 10);
+    DrawText("1 Block", 576 / 2 - 40, 576 - 10, 5, WHITE);
+    DrawText("2 Sand", 576 / 2 + 40, 576 - 10, 5, WHITE);
 
     EndDrawing();
   }
